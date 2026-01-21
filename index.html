@@ -29,7 +29,8 @@
         #results { margin-top: 20px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; }
         .result-item { display: flex; justify-content: space-between; margin: 10px 0; font-size: 18px; }
         .note { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
-    </style>
+        .nav a:hover { background: #f0f0f0; }
+        </style>
 </head>
 <body>
     <h1>🔋 Ricarica T03</h1>
@@ -58,8 +59,10 @@
         <div class="result-item"><span>kWh Caricati:</span> <span id="kwhCaricati">-</span> kWh</div>
     </div>
     
-    <p class="note">Valori T03 reali: 16.6 kWh/100km, batteria 37.3 kWh.</p>
-
+    <p class="note">Batteria T03: 37.3 kWh. Consumo: 16.6 kWh/100km.</p>
+<div class="nav">
+    <a href="tempo.html" style="display: block; text-align: center; margin-top: 20px; color: #007aff; text-decoration: none; background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">⏱ Calcola Tempo per KM</a>
+    </div>
     <script>
         const BATTERIA_KWH = 37.3; // Fissa T03
 
