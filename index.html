@@ -38,13 +38,16 @@
     <input type="number" id="socStart" value="20" min="0" max="100">
     
     <label for="potenza">Potenza Colonnina (kW):</label>
-    <input type="number" id="potenza" value="6" min="1" max="50" step="0.1">
+    <input type="number" id="potenza" value="22" min="3" max="150" step="0.1">
     
     <label for="tempo">Tempo Ricarica (ore):</label>
-    <input type="number" id="tempo" value="1" min="0.1" max="24" step="0.1">
+    <input type="number" id="tempo" value="1" min="0.1" max="10" step="0.1">
+    
+    <label for="consumo">Consumo (kWh/100km):</label>
+    <input type="number" id="consumo" value="16.6" min="10" max="25" step="0.1">
     
     <label for="costo">Costo (€/kWh):</label>
-    <input type="number" id="costo" value="0.50" min="0" step="0.01">
+    <input type="number" id="costo" value="0.70" min="0" step="0.01">
     
     <button onclick="calcola()">Calcola</button>
     
@@ -55,18 +58,18 @@
         <div class="result-item"><span>kWh Caricati:</span> <span id="kwhCaricati">-</span> kWh</div>
     </div>
     
-    <p class="note">Calcolo approssimativo. Batteria: 37.3 kWh. Consumo: 16.6 kWh/100km.</p>
+    <p class="note">Valori T03 reali: 16.6 kWh/100km, batteria 37.3 kWh.</p>
 
     <script>
-        const BATTERIA_KWH = 37.3;
-        const CONSUMO_KWH100 = 16.6;
-        const KM_PER_KWH = 100 / CONSUMO_KWH100;
+        const BATTERIA_KWH = 37.3; // Fissa T03
 
         function calcola() {
             const socStart = parseFloat(document.getElementById('socStart').value);
             const potenza = parseFloat(document.getElementById('potenza').value);
             const tempoOre = parseFloat(document.getElementById('tempo').value);
+            const consumoKwh100 = parseFloat(document.getElementById('consumo').value);
             const costoKwh = parseFloat(document.getElementById('costo').value);
+            const kmPerKwh = 100 / consumoKwh100;
 
             let energiaCaricata = potenza * tempoOre;
             const socStartKwh = (socStart / 100) * BATTERIA_KWH;
@@ -74,7 +77,7 @@
             energiaCaricata = Math.min(energiaCaricata, maxCaricabile);
 
             const socEnd = Math.round((socStartKwh + energiaCaricata) / BATTERIA_KWH * 100);
-            const kmGuadagnati = Math.round(energiaCaricata * KM_PER_KWH);
+            const kmGuadagnati = Math.round(energiaCaricata * kmPerKwh);
             const costoRicarica = (energiaCaricata * costoKwh).toFixed(2);
 
             document.getElementById('socEnd').textContent = socEnd;
