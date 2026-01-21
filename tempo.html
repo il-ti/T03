@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⏱ Tempo Ricarica T03</title>
+    <link rel="manifest" href="data:application/manifest+json,{
+        \"name\": \"Tempo Ricarica T03\",
+        \"icons\": [{"src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgZmlsbD0iIzAwN2FmZiIgPjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiLz48L3N2Zz4=", "sizes": "192x192"}],
+        \"start_url\": \".\",
+        \"display\": \"standalone\",
+        \"theme_color\": \"#007aff\"
+    }">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 400px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+        h1 { text-align: center; color: #ff3b30; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: #ff3b30; color: white; border: none; border-radius: 8px; font-size: 18px; margin-top: 20px; }
+        #results { margin-top: 20px; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; }
+        .result-item { display: flex; justify-content: space-between; margin: 10px 0; font-size: 18px; }
+        .big { font-size: 24px; font-weight: bold; color: #ff3b30; }
+        .note { font-size: 12px; color: #666; text-align: center; margin-top: 10px; }
+        .back { text-align: center; margin-top: 20px; }
+        .back a { color: #007aff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>⏱ Tempo Ricarica</h1>
+    
+    <label for="kmTarget">KM da Recuperare:</label>
+    <input type="number" id="kmTarget" value="50" min="1" max="300">
+    
+    <label for="potenza">Potenza Colonnina (kW):</label>
+    <input type="number" id="potenza" value="22" min="3" max="150" step="0.1">
+    
+    <label for="consumo">Consumo (kWh/100km):</label>
+    <input type="number" id="consumo" value="16.6" min="10" max="25" step="0.1">
+    
+    <label for="costo">Costo (€/kWh):</label>
+    <input type="number" id="costo" value="0.70" min="0" step="0.01">
+    
+    <label for="socStart">SOC Attuale (%):</label>
+    <input type="number" id="socStart" value="20" min="0" max="99">
+    
+    <button onclick="calcola()">Calcola Tempo</button>
+    
+    <div id="results">
+        <div class="result-item"><span class="big">Tempo:</span> <span id="tempoOre">-</span> h</div>
+        <div class="result-item"><span>kWh Necessari:</span> <span id="kwhNecessari">-</span> kWh</div>
+        <div class="result-item"><span>Costo:</span> <span id="costoRicarica">€ -</span></div>
+        <div class="result-item"><span>SOC Finale:</span> <span id="socEnd">-</span>%</div>
+    </div>
+    
+    <p class="note">Batteria T03: 37.3 kWh. Link index.html ↩</p>
+    <div class="back"><a href="index.html">← Calcolatore SOC</a></div>
+
+    <script>
+        const BATTERIA_KWH = 37.3;
+
+        function calcola() {
+            const kmTarget = parseFloat(document.getElementById('kmTarget').value);
+            const potenza = parseFloat(document.getElementById('potenza').value);
+            const consumoKwh100 = parseFloat(document.getElementById('consumo').value);
+            const costoKwh = parseFloat(document.getElementById('costo').value);
+            const socStart = parseFloat(document.getElementById('socStart').value);
+
+            const kwhNecessari = (kmTarget / 100) * consumoKwh100;
+            const tempoOre = (kwhNecessari / potenza).toFixed(2);
+            const tempoMin = Math.round(tempoOre * 60);
+            const socStartKwh = (socStart / 100) * BATTERIA_KWH;
+            const socEndKwh = socStartKwh + kwhNecessari;
+            const socEnd = Math.min(100, Math.round(socEndKwh / BATTERIA_KWH * 100));
+            const costoRicarica = (kwhNecessari * costoKwh).toFixed(2);
+
+            document.getElementById('tempoOre').textContent = `${tempoOre} (${tempoMin} min)`;
+            document.getElementById('kwhNecessari').textContent = kwhNecessari.toFixed(1);
+            document.getElementById('costoRicarica').textContent = `€ ${costoRicarica}`;
+            document.getElementById('socEnd').textContent = socEnd;
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
